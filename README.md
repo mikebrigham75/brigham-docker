@@ -1,2 +1,2 @@
 # brigham-docker
-My docker repository
+This contains some examples that I created for running AEM within Docker Containers
