@@ -45,3 +45,11 @@ ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/r
    
 # Start AEM
 RUN java -Xms8g -Xms8g -jar /opt/aem/author/cq-quickstart-6.0.0.jar -r author,crx3 -p 4502
+
+# Copy modified Start file
+ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/bin/start /opt/aem/author/crx-quickstart/bin
+
+# Download & install configurations (Set to Classic mode & add oak-query,log)
+ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/config/brigham-config-author-1.0.zip /opt
+curl -u admin:admin -F file=@"/opt/brigham-config-author-1.0.zip" -F name="brighamConfigAuthor" -F force=true -F install=true http://localhost:4502/crx/packmgr/service.jsp
+
