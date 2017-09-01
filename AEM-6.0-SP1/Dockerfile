@@ -12,7 +12,7 @@
 FROM centos
 MAINTAINER Mike Brigham <brigham@adobe.com>
 
-EXPOSE 4502
+EXPOSE 4502:4502
 
 # update system
 RUN yum update
