@@ -13,42 +13,33 @@ FROM centos
 MAINTAINER Mike Brigham <brigham@adobe.com>
 
 # update system
-RUN echo 'Updating System'
 RUN yum update
 
 # install wget
-RUN echo 'Installing wget'
 RUN yum -y install wget
  
 # install java
-RUN echo 'Installing Java'
 RUN wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jre-8u131-linux-x64.rpm"
 RUN yum -y localinstall jre-8u131-linux-x64.rpm
  
 # set date-time to UK
-RUN echo 'Updating DateTime'
 RUN rm -f /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
  
 # Create initial folders
-RUN echo 'Creating Folders'
 RUN mkdir -p /opt/aem/author/crx-quickstart/install
    
 # Download AEM 6.0
-RUN echo 'Downloading AEM'
 RUN cd /opt/aem/author
 ADD http://brigham-build.corp.adobe.com:8081/artifactory/tam-aem-local/6.0.0/cq-quickstart-6.0.0.jar /opt/aem/author
 
 # Download license
-RUN echo 'Downloading AEM'
 ADD wget http://brigham-build:8081/artifactory/tam-aem-local/config/license/license.properties /opt/aem/author
    
 # Download SP3 & install config files
-RUN echo 'Downloading SP & Config files'
 ADD http://brigham-build:8081/artifactory/tam-aem-local/6.0.3/AEM-6.0-Service-Pack-3-6.0.SP3.zip /opt/aem/author/crx-quickstart/install
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.blob.datastore.FileDataStore.config /opt/aem/author/crx-quickstart/install
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService.config /opt/aem/author/crx-quickstart/install
    
 # Start AEM
-RUN echo 'Starting AEM'
 RUN java -Xms8g -Xms8g -jar /opt/aem/author/cq-quickstart-6.0.0.jar -r author,crx3 -p 4502
