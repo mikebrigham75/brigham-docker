@@ -46,7 +46,7 @@ ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/r
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService.config /opt/aem/author/crx-quickstart/install
 
 # Start AEM
-WORKDIR /opt/aem/author/crx-quickstart/bin
+WORKDIR /opt/aem/author
 RUN java -Xms8g -Xms8g -jar cq-quickstart-6.0.0.jar -r author,crx3 -p 4502
 #RUN chmod 777 -R /opt/aem/author/crx-quickstart/bin
 #RUN ./start
