@@ -5,7 +5,7 @@
 #
 # All AEM files from from an internal artifactory so are not publically accessible
 #
-# v1.0 - 2017.09.01 - this is my first Dockerfile so needs improving
+# v1.0 - 2017.09.01 - this is my first Dockerfile so needs improving - everything is hardcoded at the moment - this will change in later versions
 #
 ##################################
 
@@ -31,7 +31,7 @@ RUN ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
 # Create initial folders & Entry point
 RUN mkdir -p /opt/aem/author/crx-quickstart/install
 RUN mkdir -p /opt/aem/author/crx-quickstart/bin
-ENTRYPOINT ["/opt/aem/author/crx-quickstart/bin"]
+ENTRYPOINT /opt/aem/author/crx-quickstart/bin
    
 # Download AEM 6.0
 RUN cd /opt/aem/author
@@ -45,14 +45,15 @@ ADD http://brigham-build:8081/artifactory/tam-aem-local/6.0.3/AEM-6.0-Service-Pa
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.blob.datastore.FileDataStore.config /opt/aem/author/crx-quickstart/install
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService.config /opt/aem/author/crx-quickstart/install
 
-# Copy modified Start file
-ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/bin/start /opt/aem/author/crx-quickstart/bin
-
 # Start AEM
-RUN java -Xms8g -Xms8g -jar /opt/aem/author/cq-quickstart-6.0.0.jar -r author,crx3 -p 4502
+WORKDIR /opt/aem/author/crx-quickstart/bin
+RUN java -Xms8g -Xms8g -jar cq-quickstart-6.0.0.jar -r author,crx3 -p 4502
 #RUN chmod 777 -R /opt/aem/author/crx-quickstart/bin
-#WORKDIR /opt/aem/author/crx-quickstart/bin
 #RUN ./start
+
+
+# Copy modified Start file
+# ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/bin/start /opt/aem/author/crx-quickstart/bin
 
 # Download & install configurations (Set to Classic mode & add oak-query,log)
 #ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/config/brigham-config-author-1.0.zip /opt
