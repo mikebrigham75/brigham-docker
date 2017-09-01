@@ -34,13 +34,12 @@ RUN mkdir -p /opt/aem/author/crx-quickstart/bin
 ENTRYPOINT /opt/aem/author/crx-quickstart/bin
    
 # Download AEM 6.0
-RUN cd /opt/aem/author
 ADD http://brigham-build.corp.adobe.com:8081/artifactory/tam-aem-local/6.0.0/cq-quickstart-6.0.0.jar /opt/aem/author
 
 # Download license
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/license/license.properties /opt/aem/author
    
-# Download SP3 & install config files
+# Download SP3 & install config files to install folder
 ADD http://brigham-build:8081/artifactory/tam-aem-local/6.0.3/AEM-6.0-Service-Pack-3-6.0.SP3.zip /opt/aem/author/crx-quickstart/install
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.blob.datastore.FileDataStore.config /opt/aem/author/crx-quickstart/install
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService.config /opt/aem/author/crx-quickstart/install
