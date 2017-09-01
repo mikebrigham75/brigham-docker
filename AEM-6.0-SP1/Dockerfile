@@ -28,9 +28,10 @@ RUN yum -y localinstall jre-8u131-linux-x64.rpm
 RUN rm -f /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
  
-# Create initial folders
+# Create initial folders & Entry point
 RUN mkdir -p /opt/aem/author/crx-quickstart/install
 RUN mkdir -p /opt/aem/author/crx-quickstart/bin
+ENTRYPOINT ["/opt/aem/author/crx-quickstart/bin"]
    
 # Download AEM 6.0
 RUN cd /opt/aem/author
@@ -48,11 +49,11 @@ ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/r
 ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/bin/start /opt/aem/author/crx-quickstart/bin
 
 # Start AEM
-# RUN java -Xms8g -Xms8g -jar /opt/aem/author/cq-quickstart-6.0.0.jar -r author,crx3 -p 4502
-WORKDIR /opt/aem/author/crx-quickstart/bin
-RUN ./start
+RUN java -Xms8g -Xms8g -jar /opt/aem/author/cq-quickstart-6.0.0.jar -r author,crx3 -p 4502
+#RUN chmod 777 -R /opt/aem/author/crx-quickstart/bin
+#WORKDIR /opt/aem/author/crx-quickstart/bin
+#RUN ./start
 
 # Download & install configurations (Set to Classic mode & add oak-query,log)
 #ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/config/brigham-config-author-1.0.zip /opt
 #curl -u admin:admin -F file=@"/opt/brigham-config-author-1.0.zip" -F name="brighamConfigAuthor" -F force=true -F install=true http://localhost:4502/crx/packmgr/service.jsp
-
