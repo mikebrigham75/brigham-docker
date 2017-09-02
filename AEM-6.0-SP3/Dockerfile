@@ -69,7 +69,7 @@ until $(curl -u admin:admin --output /dev/null --silent --head --fail http://loc
 #RUN rm -f /opt/brigham-config-author-1.0.zip
     
 # Once all config has been added, stop AEM
-RUN crx-quickstart/bin/stop
+# RUN crx-quickstart/bin/stop
 
 
 # End of Dockerfile
