@@ -64,9 +64,9 @@ RUN crx-quickstart/bin/start && \
 until $(curl -u admin:admin --output /dev/null --silent --head --fail http://localhost:4502); do printf '.'; sleep 5; done
     
 # Add post first run config
-ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/config/brigham-config-author-1.0.zip /opt
-RUN curl -u admin:admin -F file=@"/opt/brigham-config-author-1.0.zip" -F name="brighamConfigAuthor" -F force=true -F install=true http://localhost:4502/crx/packmgr/service.jsp
-RUN rm -f /opt/brigham-config-author-1.0.zip
+#ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/config/brigham-config-author-1.0.zip /opt
+#RUN curl -u admin:admin -F file=@"/opt/brigham-config-author-1.0.zip" -F name="brighamConfigAuthor" -F force=true -F install=true http://localhost:4502/crx/packmgr/service.jsp
+#RUN rm -f /opt/brigham-config-author-1.0.zip
     
 # Once all config has been added, stop AEM
 RUN crx-quickstart/bin/stop
