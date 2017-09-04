@@ -1,0 +1,28 @@
+##################################
+# CentOS-Oracle-8-131
+# - Centos 7
+# - Java 8.131
+# brigham@adobe.com
+#
+# v1.0 - 2017.09.04
+#
+##################################
+
+FROM centos
+MAINTAINER Mike Brigham <brigham@adobe.com>
+
+# update system
+RUN yum update
+
+# install wget
+RUN yum -y install wget
+ 
+# install java
+WORKDIR /opt
+RUN wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jre-8u131-linux-x64.rpm"
+RUN yum -y localinstall jre-8u131-linux-x64.rpm
+RUN rm -f jre-8u131-linux-x64.rpm
+ 
+# set date-time to UK
+RUN rm -f /etc/localtime
+RUN ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
