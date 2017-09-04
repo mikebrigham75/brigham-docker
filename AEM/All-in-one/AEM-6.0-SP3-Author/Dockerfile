@@ -12,8 +12,9 @@
 FROM centos
 MAINTAINER Mike Brigham <brigham@adobe.com>
 
-EXPOSE 4502
-EXPOSE 80
+ENV AEM_RUNMODE author
+ENV AEM_PORT 4502
+ENV DEBUG_PORT 30303
 
 # update system
 RUN yum update
@@ -32,45 +33,41 @@ RUN rm -f /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
  
 # Create initial folders
-RUN mkdir -p /opt/aem/author/crx-quickstart/install
-RUN mkdir -p /opt/aem/author/crx-quickstart/bin
+RUN mkdir -p /opt/aem/$AEM_RUNMODE/crx-quickstart/install
+RUN mkdir -p /opt/aem/$AEM_RUNMODE/crx-quickstart/bin
    
 # Download AEM 6.0
-ADD http://brigham-build.corp.adobe.com:8081/artifactory/tam-aem-local/6.0.0/cq-quickstart-6.0.0.jar /opt/aem/author
+ADD http://brigham-build.corp.adobe.com:8081/artifactory/tam-aem-local/6.0.0/cq-quickstart-6.0.0.jar /opt/aem/$AEM_RUNMODE
 
 # Download license
-ADD http://brigham-build:8081/artifactory/tam-aem-local/config/license/license.properties /opt/aem/author
+ADD http://brigham-build:8081/artifactory/tam-aem-local/config/license/license.properties /opt/aem/$AEM_RUNMODE
    
 # Unpack AEM
 # This step is essential as if you launch AEM without unpacking it first, the docker image build will never complete
-WORKDIR /opt/aem/author
+WORKDIR /opt/aem/$AEM_RUNMODE
 
 RUN java -jar cq-quickstart-6.0.0.jar -unpack
 
 # Download SP3 & install config files to install folder
-ADD http://brigham-build:8081/artifactory/tam-aem-local/6.0.3/AEM-6.0-Service-Pack-3-6.0.SP3.zip /opt/aem/author/crx-quickstart/install
-ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.blob.datastore.FileDataStore.config /opt/aem/author/crx-quickstart/install
-ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/repo/org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService.config /opt/aem/author/crx-quickstart/install
+ADD http://brigham-build:8081/artifactory/tam-aem-local/6.0.3/AEM-6.0-Service-Pack-3-6.0.SP3.zip /opt/aem/$AEM_RUNMODE/crx-quickstart/install
+ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/$AEM_RUNMODE/repo/org.apache.jackrabbit.oak.plugins.blob.datastore.FileDataStore.config /opt/aem/$AEM_RUNMODE/crx-quickstart/install
+ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/$AEM_RUNMODE/repo/org.apache.jackrabbit.oak.plugins.segment.SegmentNodeStoreService.config /opt/aem/$AEM_RUNMODE/crx-quickstart/install
 
 # Copy modified Start file
-ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/bin/start /opt/aem/author/crx-quickstart/bin
+ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/$AEM_RUNMODE/bin/start /opt/aem/$AEM_RUNMODE/crx-quickstart/bin
 
 # Start AEM & add post first run config
 RUN chmod 777 -R /opt/aem
-WORKDIR /opt/aem/author
+WORKDIR /opt/aem/$AEM_RUNMODE
 RUN crx-quickstart/bin/start && \
     
 # Do not proceed until AEM is running
-until $(curl -u admin:admin --output /dev/null --silent --head --fail http://localhost:4502); do printf '.'; sleep 5; done
+until $(curl -u admin:admin --output /dev/null --silent --head --fail http://localhost:$AEM_PORT); do printf '.'; sleep 5; done
     
-# Add post first run config
-#WORKDIR /opt
-#ADD http://brigham-build:8081/artifactory/tam-aem-local/config/mk/tarmk/author/config/brigham-config-author-1.0.zip /opt
-#RUN curl -u admin:admin -F file=@"brigham-config-author-1.0.zip" -F name="brighamConfigAuthor" -F force=true -F install=true http://localhost:4502/crx/packmgr/service.jsp
-#RUN rm -f brigham-config-author-1.0.zip
     
-# Once all config has been added, stop AEM
-# RUN crx-quickstart/bin/stop
+EXPOSE $AEM_PORT
+EXPOSE $DEBUG_PORT    
 
 
-# End of Dockerfile
+# Launch AEM when image starts
+CMD /opt/aem/$AEM_RUNMODE/crx-quickstart/bin/start
