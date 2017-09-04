@@ -5,8 +5,10 @@
 #
 # All AEM files from from an internal artifactory so are not publically accessible
 #
-# v1.0 - 2017.09.01 - this is my first Dockerfile so needs improving - everything is hardcoded at the moment - this will change in later versions
-#
+# This is an "all in one" Dockerfile and will be split into multiple Dockerfiles once complete
+# 
+# v1.0 - 2017.09.01 - this is my first Dockerfile so needs improving
+# v1.1 - 2017.09.04 - tidied up with some variables
 ##################################
 
 FROM centos
